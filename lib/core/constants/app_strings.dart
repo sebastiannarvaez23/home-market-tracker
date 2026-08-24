@@ -56,6 +56,17 @@ abstract final class AppStrings {
   static const dashboardProductsShortcutHint = 'Tu catálogo frecuente';
   static const dashboardHistoryShortcut = 'Historial';
   static const dashboardHistoryShortcutHint = 'Mercados realizados';
+  static const dashboardSuggestionsShortcut = 'Sugerencias';
+  static const dashboardSuggestionsShortcutHint =
+      'Qué comprar más barato en cada mercado';
+  static const marketSuggestionsTitle = 'Sugerencias por mercado';
+  static const marketSuggestionsHint =
+      'Productos con el mejor precio que has pagado, agrupados por mercado.';
+  static const marketSuggestionsBestPriceHint = 'Mejor precio conocido';
+  static const emptyMarketSuggestions =
+      'Completa compras para ver dónde te sale más barato cada producto.';
+  static const errorLoadMarketSuggestions =
+      'No se pudieron cargar las sugerencias.';
   static const dashboardMarketsTitle = 'Mercados';
   static const dashboardConvenientMarket = 'Más conveniente';
   static const dashboardHighestSpendMarket = 'Con más gasto';

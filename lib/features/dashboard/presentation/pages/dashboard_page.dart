@@ -26,11 +26,13 @@ class DashboardPage extends StatelessWidget {
     super.key,
     required this.onOpenProducts,
     required this.onOpenHistory,
+    required this.onOpenSuggestions,
     required this.onStartShopping,
   });
 
   final VoidCallback onOpenProducts;
   final VoidCallback onOpenHistory;
+  final VoidCallback onOpenSuggestions;
   final VoidCallback onStartShopping;
 
   @override
@@ -73,6 +75,7 @@ class DashboardPage extends StatelessWidget {
                         snapshot: state.snapshot!,
                         onOpenProducts: onOpenProducts,
                         onOpenHistory: onOpenHistory,
+                        onOpenSuggestions: onOpenSuggestions,
                       ),
                   },
                 ),
@@ -90,11 +93,13 @@ class _DashboardBody extends StatelessWidget {
     required this.snapshot,
     required this.onOpenProducts,
     required this.onOpenHistory,
+    required this.onOpenSuggestions,
   });
 
   final DashboardSnapshot snapshot;
   final VoidCallback onOpenProducts;
   final VoidCallback onOpenHistory;
+  final VoidCallback onOpenSuggestions;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +122,7 @@ class _DashboardBody extends StatelessWidget {
           DashboardShortcutRow(
             onOpenProducts: onOpenProducts,
             onOpenHistory: onOpenHistory,
+            onOpenSuggestions: onOpenSuggestions,
           ),
           const SizedBox(height: AppSpacing.lg),
           DashboardEfficiencyCard(snapshot: snapshot),

@@ -12,10 +12,12 @@ class DashboardShortcutRow extends StatelessWidget {
     super.key,
     required this.onOpenProducts,
     required this.onOpenHistory,
+    required this.onOpenSuggestions,
   });
 
   final VoidCallback onOpenProducts;
   final VoidCallback onOpenHistory;
+  final VoidCallback onOpenSuggestions;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,13 @@ class DashboardShortcutRow extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        _ShortcutCard(
+          icon: AppIcons.insights,
+          title: AppStrings.dashboardSuggestionsShortcut,
+          hint: AppStrings.dashboardSuggestionsShortcutHint,
+          onTap: onOpenSuggestions,
         ),
       ],
     );

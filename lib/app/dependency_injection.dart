@@ -5,9 +5,13 @@ import 'package:home_market_tracker/core/id/id_generator.dart';
 import 'package:home_market_tracker/core/time/clock.dart';
 import 'package:home_market_tracker/features/dashboard/data/datasources/dashboard_local_data_source.dart';
 import 'package:home_market_tracker/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:home_market_tracker/features/dashboard/data/repositories/market_suggestion_repository_impl.dart';
 import 'package:home_market_tracker/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:home_market_tracker/features/dashboard/domain/repositories/market_suggestion_repository.dart';
 import 'package:home_market_tracker/features/dashboard/domain/usecases/get_dashboard_snapshot.dart';
+import 'package:home_market_tracker/features/dashboard/domain/usecases/get_market_price_suggestions.dart';
 import 'package:home_market_tracker/features/dashboard/presentation/bloc/dashboard_cubit.dart';
+import 'package:home_market_tracker/features/dashboard/presentation/bloc/market_suggestions_cubit.dart';
 import 'package:home_market_tracker/features/history/data/datasources/history_local_data_source.dart';
 import 'package:home_market_tracker/features/history/data/repositories/history_repository_impl.dart';
 import 'package:home_market_tracker/features/history/domain/repositories/history_repository.dart';
@@ -103,6 +107,9 @@ Future<void> configureDependencies({
   sl.registerLazySingleton<DashboardRepository>(
     () => DashboardRepositoryImpl(sl()),
   );
+  sl.registerLazySingleton<MarketSuggestionRepository>(
+    () => MarketSuggestionRepositoryImpl(sl()),
+  );
 
   sl.registerFactory(() => ListProducts(sl()));
   sl.registerFactory(() => ListProductsWithLastPurchase(sl()));
@@ -169,4 +176,6 @@ Future<void> configureDependencies({
 
   sl.registerFactory(() => GetDashboardSnapshot(sl(), clock: sl()));
   sl.registerFactory(() => DashboardCubit(sl()));
+  sl.registerFactory(() => GetMarketPriceSuggestions(sl()));
+  sl.registerFactory(() => MarketSuggestionsCubit(sl()));
 }

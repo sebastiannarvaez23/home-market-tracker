@@ -23,4 +23,5 @@ abstract final class AppIcons {
   static const check = Icons.check_rounded;
   static const cart = Icons.shopping_cart_rounded;
   static const camera = Icons.photo_camera_rounded;
+  static const expandPhoto = Icons.open_in_full_rounded;
 }

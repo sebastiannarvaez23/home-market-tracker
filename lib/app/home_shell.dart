@@ -11,7 +11,9 @@ import 'package:home_market_tracker/core/widgets/app_nav_bar.dart';
 import 'package:home_market_tracker/core/widgets/app_navigator.dart';
 import 'package:home_market_tracker/core/widgets/app_scaffold.dart';
 import 'package:home_market_tracker/features/dashboard/presentation/bloc/dashboard_cubit.dart';
+import 'package:home_market_tracker/features/dashboard/presentation/bloc/market_suggestions_cubit.dart';
 import 'package:home_market_tracker/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:home_market_tracker/features/dashboard/presentation/pages/market_suggestions_page.dart';
 import 'package:home_market_tracker/features/history/presentation/bloc/history_detail_cubit.dart';
 import 'package:home_market_tracker/features/history/presentation/bloc/history_list_cubit.dart';
 import 'package:home_market_tracker/features/history/presentation/pages/history_detail_page.dart';
@@ -63,6 +65,7 @@ class _HomeShellState extends State<HomeShell> {
                 DashboardPage(
                   onOpenProducts: () => _select(context, 1),
                   onOpenHistory: () => _select(context, 2),
+                  onOpenSuggestions: () => _openMarketSuggestions(context),
                   onStartShopping: () => _startShopping(context),
                 ),
                 ProductsListPage(
@@ -94,6 +97,16 @@ class _HomeShellState extends State<HomeShell> {
     if (index == 2) {
       context.read<HistoryListCubit>().refreshed();
     }
+  }
+
+  Future<void> _openMarketSuggestions(BuildContext context) async {
+    await AppNavigator.push<void>(
+      context,
+      BlocProvider(
+        create: (_) => sl<MarketSuggestionsCubit>()..started(),
+        child: const MarketSuggestionsPage(),
+      ),
+    );
   }
 
   Future<void> _openProductDetail(

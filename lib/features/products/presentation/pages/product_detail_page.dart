@@ -76,19 +76,11 @@ class ProductDetailPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        ProductDetailHeader(product: product),
         Padding(
           padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl,
-            AppSpacing.sm,
             AppSpacing.xl,
             AppSpacing.md,
-          ),
-          child: ProductDetailHeader(product: product),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl,
-            0,
             AppSpacing.xl,
             AppSpacing.md,
           ),
@@ -103,9 +95,9 @@ class ProductDetailPage extends StatelessWidget {
             onPressed: cubit.suggestionToggled,
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: const AppText(
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          child: AppText(
             AppStrings.purchaseHistoryTitle,
             variant: AppTextVariant.title,
             color: AppColors.textPrimary,

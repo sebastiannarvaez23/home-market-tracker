@@ -59,7 +59,7 @@ dart analyze
 
 ## Generar e instalar (Android e iOS)
 
-Uso personal: no hace falta Play Store ni App Store. La versión sale de `pubspec.yaml` (hoy `0.1.0+1`).
+Uso personal: no hace falta Play Store ni App Store. La versión sale de `pubspec.yaml` (hoy `0.2.0+2`).
 
 Antes de empaquetar:
 

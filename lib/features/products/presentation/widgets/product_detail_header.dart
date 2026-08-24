@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:home_market_tracker/core/theme/app_colors.dart';
 import 'package:home_market_tracker/core/theme/app_spacing.dart';
 import 'package:home_market_tracker/core/widgets/app_card.dart';
-import 'package:home_market_tracker/core/widgets/app_product_photo.dart';
+import 'package:home_market_tracker/core/widgets/app_photo_viewer.dart';
 import 'package:home_market_tracker/core/widgets/app_tag.dart';
 import 'package:home_market_tracker/core/widgets/app_text.dart';
 import 'package:home_market_tracker/features/products/domain/entities/product.dart';
@@ -14,15 +14,21 @@ class ProductDetailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      child: Row(
-        children: [
-          AppProductPhoto(
-            path: product.photoPath,
-            size: 64,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppPhotoBanner(
+          path: product.photoPath,
+          heroTag: 'product-photo-${product.id}',
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xl,
+            AppSpacing.md,
+            AppSpacing.xl,
+            0,
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
+          child: AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -53,8 +59,8 @@ class ProductDetailHeader extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

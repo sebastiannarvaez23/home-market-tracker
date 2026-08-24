@@ -5,10 +5,13 @@ import 'package:home_market_tracker/core/value/quantity.dart';
 import 'package:home_market_tracker/core/value/unit_of_measure.dart';
 import 'package:home_market_tracker/features/dashboard/domain/entities/dashboard_facts.dart';
 import 'package:home_market_tracker/features/dashboard/domain/entities/dashboard_window.dart';
+import 'package:home_market_tracker/features/dashboard/domain/entities/market_suggestion.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class DashboardLocalDataSource {
   Future<DashboardFacts> loadFacts(DashboardWindow window);
+
+  Future<List<BestPriceOffer>> listBestPriceOffers();
 }
 
 class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
@@ -182,5 +185,57 @@ GROUP BY si.${ShoppingItemColumns.productId}
       for (final row in rows)
         row['product_id']! as String: (row['item_count'] as num).toInt(),
     };
+  }
+
+  @override
+  Future<List<BestPriceOffer>> listBestPriceOffers() async {
+    final db = await _database.connection;
+    final rows = await db.rawQuery(
+      '''
+SELECT
+  si.${ShoppingItemColumns.productId} AS product_id,
+  si.${ShoppingItemColumns.productNameSnapshot} AS product_name,
+  ss.${ShoppingSessionColumns.marketId} AS market_id,
+  ss.${ShoppingSessionColumns.marketNameSnapshot} AS market_name,
+  si.${ShoppingItemColumns.unitPrice} AS unit_price,
+  si.${ShoppingItemColumns.uom} AS uom,
+  ss.${ShoppingSessionColumns.completedAt} AS purchased_at
+FROM ${DatabaseTables.shoppingItems} si
+INNER JOIN ${DatabaseTables.shoppingSessions} ss
+  ON ss.${ShoppingSessionColumns.id} = si.${ShoppingItemColumns.sessionId}
+INNER JOIN (
+  SELECT
+    si2.${ShoppingItemColumns.productId} AS product_id,
+    MIN(si2.${ShoppingItemColumns.unitPrice}) AS min_price
+  FROM ${DatabaseTables.shoppingItems} si2
+  INNER JOIN ${DatabaseTables.shoppingSessions} ss2
+    ON ss2.${ShoppingSessionColumns.id} = si2.${ShoppingItemColumns.sessionId}
+  WHERE ss2.${ShoppingSessionColumns.status} = ?
+  GROUP BY si2.${ShoppingItemColumns.productId}
+) best
+  ON best.product_id = si.${ShoppingItemColumns.productId}
+ AND si.${ShoppingItemColumns.unitPrice} = best.min_price
+WHERE ss.${ShoppingSessionColumns.status} = ?
+''',
+      [
+        ShoppingSessionStatusValues.completed,
+        ShoppingSessionStatusValues.completed,
+      ],
+    );
+    return rows
+        .map(
+          (row) => BestPriceOffer(
+            productId: row['product_id']! as String,
+            productName: row['product_name']! as String,
+            marketId: row['market_id']! as String,
+            marketName: row['market_name']! as String,
+            unitPrice: Money.cents(
+              ((row['unit_price'] as num).toDouble() * 100).round(),
+            ),
+            uom: UnitOfMeasure.fromStorage(row['uom']! as String),
+            purchasedAt: row['purchased_at']! as int,
+          ),
+        )
+        .toList(growable: false);
   }
 }

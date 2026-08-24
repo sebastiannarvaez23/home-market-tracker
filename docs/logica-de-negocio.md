@@ -85,6 +85,14 @@ El usuario marca productos activos para el **próximo** mercado (`isSuggested`).
 - Completar una compra **quita** la sugerencia de cada producto que quedó en esa sesión. Cancelar no cambia sugerencias.
 - Inactivos no se sugieren ni aparecen en el catálogo de compra.
 
+### RF8 — Sugerencias de compra por mercado
+
+Lista de lectura para decidir **dónde comprar más barato** cada producto, según el historial `completed` (cualquier fecha). No usa `isSuggested` ni sesiones `inProgress`/`cancelled`.
+
+Definición: el precio de referencia de un producto es `MIN(unit_price)` histórico (igual que RF6). El mercado sugerido es aquel donde se observó ese mínimo. Si varios mercados empatan, gana la compra más reciente.
+
+La UI agrupa por mercado, mercados alfabéticos, productos alfabéticos. Sin compras completadas: vacío.
+
 ## 3. Entidades y value objects
 
 ### Money
@@ -219,6 +227,15 @@ Proyección de un ítem comprado en una sesión `completed`: id del ítem, merca
 
 Ver sección 5.
 
+### MarketSuggestionGroup (lectura, RF8)
+
+Por cada mercado, los productos cuyo **mejor precio conocido** se pagó ahí.
+
+- `marketId`, `marketName` (snapshot del ítem que fijó el mínimo)
+- `items`: producto (id + nombre snapshot), `unitPrice` mínimo, `uom` de esa compra
+
+Un producto aparece en **un solo** mercado. Empate de precio: el `completed_at` más reciente.
+
 ## 4. Casos de uso
 
 Cada uno es una clase. No fusionar. Fallos de negocio = `Failure` de dominio, no excepciones genéricas.
@@ -270,6 +287,7 @@ Cada uno es una clase. No fusionar. Fallos de negocio = `Failure` de dominio, no
 | Use case | Regla de negocio |
 | --- | --- |
 | `GetDashboardSnapshot` | Calcula el snapshot del período (default: mes actual) vs período anterior. Solo sesiones `completed` |
+| `GetMarketPriceSuggestions` | Agrupa por mercado los productos cuyo mejor `unit_price` histórico se pagó ahí (RF8). Toda la historia `completed` |
 
 ## 5. Dashboard — indicadores (RF6)
 
@@ -425,6 +443,8 @@ Una base SQLite. Migración inicial = versión 1.
 **Historial de compras de un producto:** `shopping_items` + `shopping_sessions` filtrado por `product_id` y `status = completed`, `ORDER BY completed_at DESC`.
 
 **Dashboard — precio de referencia:** `MIN(unit_price)` por `product_id` en ítems de sesiones `completed` con `completed_at <= fin(P)`.
+
+**RF8 — sugerencias por mercado:** una consulta de ítems `completed` cuyo `unit_price` es el `MIN` de ese `product_id`. Un producto → un mercado (desempate `completed_at` máximo). Agrupar en domain, no hidratar todo el historial.
 
 **Completar compra:** transacción: validar ítems, actualizar `status`, `completed_at`, `total_amount`, y `is_suggested = 0` en los `product_id` de los ítems.
 

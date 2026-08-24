@@ -4,7 +4,9 @@ import 'package:home_market_tracker/core/result/result.dart';
 import 'package:home_market_tracker/core/time/clock.dart';
 import 'package:home_market_tracker/features/dashboard/domain/entities/dashboard_facts.dart';
 import 'package:home_market_tracker/features/dashboard/domain/entities/dashboard_window.dart';
+import 'package:home_market_tracker/features/dashboard/domain/entities/market_suggestion.dart';
 import 'package:home_market_tracker/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:home_market_tracker/features/dashboard/domain/repositories/market_suggestion_repository.dart';
 import 'package:home_market_tracker/features/history/domain/entities/history_detail.dart';
 import 'package:home_market_tracker/features/history/domain/entities/history_entry.dart';
 import 'package:home_market_tracker/features/history/domain/repositories/history_repository.dart';
@@ -247,6 +249,20 @@ class InMemoryShoppingRepository implements ShoppingRepository {
   Future<Result<void>> deleteInProgress(String sessionId) async {
     inProgress = null;
     return const Result.success(null);
+  }
+}
+
+class InMemoryMarketSuggestionRepository
+    implements MarketSuggestionRepository {
+  var offers = <BestPriceOffer>[];
+  Failure? failure;
+
+  @override
+  Future<Result<List<BestPriceOffer>>> loadBestPriceOffers() async {
+    if (failure != null) {
+      return Result.failure(failure!);
+    }
+    return Result.success(List<BestPriceOffer>.from(offers));
   }
 }
 
